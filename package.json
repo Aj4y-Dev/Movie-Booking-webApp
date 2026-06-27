@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch src/app.ts",
-    "seed": "tsx src/seed/seed.ts"
+    "seed:movie": "tsx src/seed/movie.seed.ts",
+    "seed:theatre": "tsx src/seed/theatre.seed.ts"
   },
   "keywords": [],
   "author": "ajayDev",

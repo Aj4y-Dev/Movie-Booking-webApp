@@ -90,8 +90,8 @@ class MovieController {
     res.status(200).json({ success: true, updatedMovie });
   });
 
-  //Delte the specific movie
-  deleteSpecifcMovie = asyncHandler(async (req: Request, res: Response) => {
+  //Delete the specific movie
+  deleteSpecificMovie = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params as { id: string };
 
     if (!mongoose.Types.ObjectId.isValid(id))

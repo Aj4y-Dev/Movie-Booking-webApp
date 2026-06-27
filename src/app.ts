@@ -6,6 +6,7 @@ import AppError from "./utils/AppError.js";
 
 import { connectDb } from "./config/db.js";
 import movieRouter from "./routes/movie.route.js";
+import theatreRouter from "./routes/theatre.route.js";
 import errorHandler from "./middleware/errorHandler.js";
 
 dotenv.config();
@@ -24,6 +25,7 @@ app.use(
 );
 
 app.use("/api/v1", movieRouter);
+app.use("/api/v1", theatreRouter);
 
 app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ success: true });

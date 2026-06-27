@@ -1,6 +1,7 @@
 import express from "express";
 import { Request, Response } from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import AppError from "./utils/AppError.js";
 
 import { connectDb } from "./config/db.js";
@@ -15,6 +16,12 @@ const port = process.env.PORT;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  }),
+);
 
 app.use("/api/v1", movieRouter);
 

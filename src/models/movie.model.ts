@@ -58,6 +58,12 @@ const movieSchema = new mongoose.Schema<IMovie>(
   { timestamps: true },
 );
 
+movieSchema.index({ releaseStatus: 1 });
+movieSchema.index({ language: 1 });
+movieSchema.index({ releaseDate: -1 }); // -1 = descending, latest first
+movieSchema.index({ name: 1 });
+movieSchema.index({ director: 1 });
+
 const Movie = mongoose.model<IMovie>("Movie", movieSchema);
 
 export default Movie;

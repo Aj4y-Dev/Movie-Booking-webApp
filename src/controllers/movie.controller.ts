@@ -76,6 +76,9 @@ class MovieController {
     if (!mongoose.Types.ObjectId.isValid(id))
       throw new AppError("Invalid id format", 400);
 
+    if (!Object.keys(req.body).length)
+      throw new AppError("No valid fields provided to update", 400);
+
     const updatedMovie = await Movie.findByIdAndUpdate(
       id,
       { ...req.body },
@@ -99,6 +102,37 @@ class MovieController {
     if (!deletedMovie) throw new AppError("Movie not found", 404);
 
     res.status(200).json({ success: true, deletedMovie });
+  });
+
+  //search query
+  searchMovies = asyncHandler(async (req: Request, res: Response) => {
+    const { name, director, language, releaseStatus } = req.query;
+
+    const filter: Record<string, unknown> = {};
+
+    // escapes special regex characters like . * + ? ^ $ { } [ ] | ( ) \
+    const escapeRegex = (value: string) =>
+      value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    if (name)
+      filter.name = { $regex: escapeRegex(name as string), $options: "i" }; // $regex = partial match - "nolan" matches "Christopher Nolan" $options: "i" = case insensitive - "NOLAN" matches "nolan"
+    if (director)
+      filter.director = {
+        $regex: escapeRegex(director as string),
+        $options: "i",
+      };
+    if (language) filter.language = { $in: [language as string] }; // $in = checks if value exists inside an array
+    if (releaseStatus)
+      // exact match - no regex needed since it's an enum value must be "PENDING", "UPCOMING" or "RELEASED"
+      filter.releaseStatus = releaseStatus as
+        | "PENDING"
+        | "UPCOMING"
+        | "RELEASED";
+
+    const movies = await Movie.find(filter);
+
+    if (!movies.length) throw new AppError("No movies found", 404);
+    res.status(200).json({ success: true, movies });
   });
 }
 

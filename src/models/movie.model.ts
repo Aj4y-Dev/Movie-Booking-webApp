@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-interface IMovie {
+export interface IMovie {
   name: string;
   description: string;
   casts: string[];

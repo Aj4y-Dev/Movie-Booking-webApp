@@ -96,11 +96,11 @@ class AuthController {
       role: user.role,
     });
 
-    res.cookie("refreshToken", refreshToken, cookieOptions);
-
     // hash and store refresh token
     user.refreshToken = await bcrypt.hash(refreshToken, 10);
     await user.save({ validateBeforeSave: false });
+
+    res.cookie("refreshToken", refreshToken, cookieOptions);
 
     res.status(200).json({
       success: true,
@@ -113,4 +113,90 @@ class AuthController {
       },
     });
   });
+
+  //refresh access token
+  refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
+    const refreshToken = req.cookies.refreshToken as string;
+
+    if (!refreshToken) throw new AppError("Refresh token not found", 401);
+
+    // verify refresh token with public key
+    const decoded = verifyToken(refreshToken);
+    if (decoded.type !== "refresh")
+      throw new AppError("Invalid token type", 401);
+
+    // find user
+    const user = await User.findById(decoded.userId).select("+refreshToken");
+    if (!user || !user.refreshToken)
+      throw new AppError("Invalid refresh token", 401);
+
+    // compare refresh token with stored hash
+    const isValid = await bcrypt.compare(refreshToken, user.refreshToken);
+    if (!isValid) throw new AppError("Invalid refresh token", 401);
+
+    // rotate - generate new tokens
+    const newAccessToken = signAccessToken({
+      userId: user._id.toString(),
+      role: user.role,
+    });
+
+    const newRefreshToken = signRefreshToken({
+      userId: user._id.toString(),
+      role: user.role,
+    });
+
+    // update stored refresh token
+    user.refreshToken = await bcrypt.hash(newRefreshToken, 10);
+    await user.save({ validateBeforeSave: false });
+
+    res.cookie("refreshToken", newRefreshToken, cookieOptions);
+
+    res.status(200).json({
+      success: true,
+      newAccessToken,
+    });
+  });
+
+  //logout
+  logout = asyncHandler(async (req: Request, res: Response) => {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) throw new AppError("Already logged out", 400);
+
+    // verify and clear
+    const decoded = verifyToken(refreshToken);
+
+    await User.findOneAndUpdate(
+      { _id: decoded.userId },
+      {
+        refreshToken: null,
+      },
+    );
+
+    //clear cookie
+    res.clearCookie("refreshToken", cookieOptions);
+
+    res.status(200).json({
+      success: true,
+      message: "Logout Successfully",
+    });
+  });
+
+  //get Current User
+  getme = asyncHandler(async (req: Request, res: Response) => {
+    const user = await User.findById(req.user?.id);
+    if (!user) throw new AppError("User not found", 404);
+
+    res.status(200).json({
+      success: true,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  });
 }
+
+export default new AuthController();

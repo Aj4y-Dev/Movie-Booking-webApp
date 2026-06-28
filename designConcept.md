@@ -226,3 +226,25 @@ openssl genrsa -out private.pem 2048
 # generate public key from private key
 
 openssl rsa -in private.pem -pubout -out public.pem
+
+also adding the access & refresh token
+
+i will store refresh token in DB:
+
+WITHOUT storing in DB
+user logs out
+→ refresh token still valid for 7 days
+→ attacker who stole token can still get new access tokens
+→ no way to invalidate it
+
+// WITH storing in DB
+user logs out
+→ clear refreshToken from DB
+→ attacker tries to use stolen token
+→ server checks DB → token not found
+→ access denied
+
+// other scenarios where DB storage helps
+user changes password → clear all refresh tokens
+admin bans user → clear refresh token
+suspicious activity → revoke all sessions

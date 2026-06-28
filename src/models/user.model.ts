@@ -5,6 +5,7 @@ export interface IUser {
   email: string;
   password: string;
   role: "CLIENT" | "USER" | "SYSTEM_ADMIN" | "ROOT_ADMIN";
+  refreshToken?: string;
 }
 
 const userSchema = new mongoose.Schema<IUser>(
@@ -37,6 +38,10 @@ const userSchema = new mongoose.Schema<IUser>(
       type: String,
       enum: ["CLIENT", "USER", "SYSTEM_ADMIN", "ROOT_ADMIN"],
       default: "CLIENT",
+    },
+    refreshToken: {
+      type: String,
+      select: false, // never returned in queries
     },
   },
   { timestamps: true },

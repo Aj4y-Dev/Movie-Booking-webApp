@@ -103,3 +103,61 @@ most comfortable
 recliner seats in some halls
 Rs.700-1000
 60 seats (30%)
+
+### Challenges
+
+1. CONCURRENT SEAT BOOKING (hardest)
+
+Two users select same seat at exact same time
+→ both see seat as available
+→ both try to book
+→ race condition
+
+Solution:
+→ MongoDB transactions
+→ Optimistic locking
+→ Redis distributed locks
+→ Socket.io realtime updates
+
+2. SEAT LOCK EXPIRY
+
+User locks seat but never pays
+→ seat stuck as locked forever
+
+Solution:
+→ Bull job queue — auto release after 5 min
+→ TTL index on lockExpiresAt
+→ Socket.io emit seat available
+
+3. PAYMENT FAILURES
+
+User pays but payment gateway fails
+→ money deducted but ticket not issued
+→ ticket issued but money not deducted
+
+Solution:
+→ Idempotency keys
+→ Webhook from payment gateway
+→ Pending → Confirmed → Failed states
+
+4. SHOW CANCELLATION (Optional)
+
+Admin cancels a show
+→ all bookings need refund
+→ all seats need to be freed
+→ all users need notification
+
+Solution:
+→ MongoDB transactions
+→ Bulk refund processing
+→ Email/SMS notification queue
+
+### Security
+
+Helmet → HTTP headers
+Rate limiting → prevent abuse
+CORS → configured properly
+bcrypt → password hashing
+express-mongo-sanitize (NoSQL injection)
+Input validation (Zod)
+Payment webhook verification

@@ -1,10 +1,12 @@
-```gitignore
 # Dependencies
 node_modules/
 
 # Build output
 dist/
 build/
+
+# private key
+src/keys/private.pem
 
 # Environment variables
 .env
@@ -51,4 +53,4 @@ temp/
 
 # Misc
 *.tgz
-```
+

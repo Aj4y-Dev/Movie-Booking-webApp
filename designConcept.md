@@ -161,3 +161,68 @@ bcrypt → password hashing
 express-mongo-sanitize (NoSQL injection)
 Input validation (Zod)
 Payment webhook verification
+
+### Jwt
+
+asymmetric cryptography (RS256) is more secure than symmetric (HS256):
+
+Symmetric (HS256) vs Asymmetric (RS256):
+
+HS256 (symmetric)
+
+one secret key → signs AND verifies
+JWT_SECRET = "mysecret123"
+
+BENEFITS:
+✅ simple — one secret key
+✅ fast — HMAC is faster than RSA
+✅ easy to implement
+✅ perfect for single server apps
+✅ less setup — no key pair generation
+✅ smaller token size
+
+DISADVANTAGES:
+❌ secret must be shared with every service
+that needs to verify token
+❌ if secret leaks → attacker forges any token
+❌ not suitable for microservices
+❌ all services have signing power
+(any service can create tokens)
+❌ harder to rotate — must update all services
+
+RS256 (asymmetric)
+
+private key → signs token (only auth server has this)
+public key → verifies token (any service can have this)
+
+BENEFITS:
+✅ private key never leaves auth server
+✅ other services only need public key
+(cant forge tokens even if public key leaks)
+✅ perfect for microservices
+✅ industry standard (Google, GitHub, Auth0)
+✅ easy key distribution
+(public key can be shared openly)
+✅ supports JWKS (public key auto discovery)
+✅ clear separation of concerns
+only auth server can sign
+anyone can verify
+
+DISADVANTAGES:
+❌ slower than HS256 (RSA math is complex)
+❌ larger token size
+❌ more complex setup
+❌ key pair management needed
+❌ overkill for single server apps
+
+for this project i will use the RS256 (asymmetric) cryptography method
+
+Generate RSA key pair:
+
+# generate private key
+
+openssl genrsa -out private.pem 2048
+
+# generate public key from private key
+
+openssl rsa -in private.pem -pubout -out public.pem

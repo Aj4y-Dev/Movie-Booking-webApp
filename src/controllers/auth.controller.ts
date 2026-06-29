@@ -25,7 +25,7 @@ class AuthController {
       throw new AppError("All fields are required", 400);
     }
 
-    const existingUser = await User.findOne(email);
+    const existingUser = await User.findOne({ email });
 
     if (existingUser) throw new AppError("Email already exists", 409);
 
@@ -116,7 +116,7 @@ class AuthController {
 
   //refresh access token
   refreshAccessToken = asyncHandler(async (req: Request, res: Response) => {
-    const refreshToken = req.cookies.refreshToken as string;
+    const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) throw new AppError("Refresh token not found", 401);
 

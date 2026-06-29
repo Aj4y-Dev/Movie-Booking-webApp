@@ -4,10 +4,14 @@ export interface ISeat {
   show: mongoose.Types.ObjectId;
   seatNumber: string;
   row: string;
+  type: "STANDARD" | "PREMIUM" | "VIP";
+  price: number;
   isBooked: boolean;
   bookedBy?: mongoose.Types.ObjectId; //optional until booked
-  price: number;
-  type: "STANDARD" | "PREMIUM" | "VIP";
+  isLocked: boolean;
+  lockedBy?: mongoose.Types.ObjectId;
+  lockedAt?: Date;
+  lockExpiresAt?: Date;
 }
 
 const seatSchema = new mongoose.Schema<ISeat>(
@@ -28,6 +32,16 @@ const seatSchema = new mongoose.Schema<ISeat>(
       required: true,
       trim: true,
     },
+    type: {
+      type: String,
+      enum: ["STANDARD", "PREMIUM", "VIP"],
+      default: "STANDARD",
+    },
+    price: {
+      type: Number,
+      required: true,
+      min: [0, "Price cannot be negative"],
+    },
     isBooked: {
       type: Boolean,
       default: false,
@@ -38,15 +52,23 @@ const seatSchema = new mongoose.Schema<ISeat>(
       ref: "User",
       default: null,
     },
-    price: {
-      type: Number,
-      required: true,
-      min: [0, "Price cannot be negative"],
+    isLocked: {
+      type: Boolean,
+      default: false,
     },
-    type: {
-      type: String,
-      enum: ["STANDARD", "PREMIUM", "VIP"],
-      default: "STANDARD",
+    lockedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    lockedAt: {
+      type: Date,
+      default: null,
+    },
+    lockExpiresAt: {
+      type: Date,
+      default: null,
+      // TTL handled in controller — after this time seat is free
     },
   },
   { timestamps: true },
@@ -57,6 +79,13 @@ seatSchema.index({ show: 1, seatNumber: 1 }, { unique: true }); // no duplicate 
 seatSchema.index({ show: 1, isBooked: 1 }); // quickly find available seats
 seatSchema.index({ bookedBy: 1 }); // find all seats booked by a user
 
-const Seat = mongoose.model<ISeat>("Seat", seatSchema);
+seatSchema.index({ show: 1 });
+seatSchema.index({ show: 1, seatNumber: 1 }, { unique: true });
+seatSchema.index({ show: 1, isBooked: 1 });
+seatSchema.index({ show: 1, isLocked: 1 });
+seatSchema.index({ lockExpiresAt: 1 });
+seatSchema.index({ bookedBy: 1 });
+
+const Seat = mongoose.model("Seat", seatSchema);
 
 export default Seat;

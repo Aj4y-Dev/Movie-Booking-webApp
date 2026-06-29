@@ -4,10 +4,13 @@ export interface IShow {
   movie: mongoose.Types.ObjectId;
   theatre: mongoose.Types.ObjectId;
   showTime: Date;
-  price: number;
   totalSeats: number;
   availableSeats: number;
   status: "ACTIVE" | "CANCELLED" | "COMPLETED";
+  createdBy: mongoose.Types.ObjectId;
+  standardPrice: number;
+  premiumPrice: number;
+  vipPrice: number;
 }
 
 const showSchema = new mongoose.Schema<IShow>(
@@ -26,11 +29,6 @@ const showSchema = new mongoose.Schema<IShow>(
       type: Date,
       required: true,
     },
-    price: {
-      type: Number,
-      required: true,
-      min: [0, "Price cannot be negative"],
-    },
     totalSeats: {
       type: Number,
       required: true,
@@ -46,6 +44,24 @@ const showSchema = new mongoose.Schema<IShow>(
       enum: ["ACTIVE", "CANCELLED", "COMPLETED"],
       default: "ACTIVE",
     },
+    standardPrice: {
+      type: Number,
+      required: true,
+      default: 300,
+      min: [0, "Price cannot be negative"],
+    },
+    premiumPrice: {
+      type: Number,
+      required: true,
+      default: 500,
+      min: [0, "Price cannot be negative"],
+    },
+    vipPrice: {
+      type: Number,
+      required: true,
+      default: 700,
+      min: [0, "Price cannot be negative"],
+    },
   },
   { timestamps: true },
 );
@@ -54,7 +70,8 @@ showSchema.index({ movie: 1 });
 showSchema.index({ theatre: 1 });
 showSchema.index({ showTime: 1 });
 showSchema.index({ status: 1 });
-showSchema.index({ movie: 1, theatre: 1, showTime: 1 }); // compound — prevent duplicate shows
+showSchema.index({ createdBy: 1 });
+showSchema.index({ movie: 1, theatre: 1, showTime: 1 }, { unique: true });
 
 const Show = mongoose.model<IShow>("Show", showSchema);
 

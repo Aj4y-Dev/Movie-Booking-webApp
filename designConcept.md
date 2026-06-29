@@ -92,7 +92,7 @@ cheapest — Rs.300-350
 60 seats (30%)
 
 PREMIUM (G-N) — middle rows  
- best viewing angle
+best viewing angle
 most popular
 Rs.500-600
 80 seats (40%)

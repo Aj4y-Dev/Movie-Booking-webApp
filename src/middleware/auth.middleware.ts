@@ -42,3 +42,13 @@ export const protect = async (
     next(new AppError("Invalid or expired token", 401));
   }
 };
+
+export const authorizeRoles = (
+  ...roles: ("CLIENT" | "USER" | "SYSTEM_ADMIN" | "ROOT_ADMIN")[]
+) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user || !roles.includes(req.user.role))
+      return next(new AppError("You do not have permission", 403));
+    next();
+  };
+};

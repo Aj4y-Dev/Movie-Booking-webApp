@@ -248,3 +248,8 @@ user logs out
 user changes password → clear all refresh tokens
 admin bans user → clear refresh token
 suspicious activity → revoke all sessions
+
+### Resource
+
+https://github.com/jlgriff/jwt-asymmetric-authentication/ for RS256 (asymmetric) JWT
+https://github.com/ryder-tech/nodejs-advance/ for RS256 (asymmetric) JWT

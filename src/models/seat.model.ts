@@ -75,17 +75,12 @@ const seatSchema = new mongoose.Schema<ISeat>(
 );
 
 seatSchema.index({ show: 1 });
-seatSchema.index({ show: 1, seatNumber: 1 }, { unique: true }); // no duplicate seats in same show
-seatSchema.index({ show: 1, isBooked: 1 }); // quickly find available seats
-seatSchema.index({ bookedBy: 1 }); // find all seats booked by a user
-
-seatSchema.index({ show: 1 });
 seatSchema.index({ show: 1, seatNumber: 1 }, { unique: true });
 seatSchema.index({ show: 1, isBooked: 1 });
 seatSchema.index({ show: 1, isLocked: 1 });
 seatSchema.index({ lockExpiresAt: 1 });
 seatSchema.index({ bookedBy: 1 });
 
-const Seat = mongoose.model("Seat", seatSchema);
+const Seat = mongoose.model<ISeat>("Seat", seatSchema);
 
 export default Seat;

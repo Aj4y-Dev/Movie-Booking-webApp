@@ -14,31 +14,31 @@ router.get("/show/:id", showController.getShow);
 router.get(
   "/shows/my-shows",
   protect,
-  authorizeRoles("CLIENT", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
   showController.getMyShows,
 );
 router.post(
   "/show",
   protect,
-  authorizeRoles("CLIENT", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
   showController.createShow,
 );
 router.patch(
   "/show/:id",
   protect,
-  authorizeRoles("CLIENT", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
   showController.updateShow,
 );
 router.patch(
   "/show/:id/cancel",
   protect,
-  authorizeRoles("CLIENT", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
   showController.cancelShow,
 );
 router.delete(
   "/show/:id",
   protect,
-  authorizeRoles("CLIENT", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
   showController.deleteShow,
 );
 

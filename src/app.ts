@@ -3,13 +3,14 @@ import { Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import AppError from "./utils/AppError.js";
+import helmet from "helmet";
 
 import { connectDb } from "./config/db.js";
 import movieRouter from "./routes/movie.route.js";
 import theatreRouter from "./routes/theatre.route.js";
 import authRouter from "./routes/auth.route.js";
 import showRouter from "./routes/show.route.js";
+import AppError from "./utils/AppError.js";
 import errorHandler from "./middleware/errorHandler.js";
 
 dotenv.config();
@@ -21,6 +22,7 @@ const port = process.env.PORT;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(helmet()); // Adds secure HTTP headers to reduce the risk of common web attacks (XSS, clickjacking, MIME sniffing, etc.)
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,

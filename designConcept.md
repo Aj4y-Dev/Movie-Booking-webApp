@@ -258,3 +258,4 @@ suspicious activity → revoke all sessions
 
 https://github.com/jlgriff/jwt-asymmetric-authentication/ for RS256 (asymmetric) JWT
 https://github.com/ryder-tech/nodejs-advance/ for RS256 (asymmetric) JWT
+https://dev.to/sagarmuchhal/securing-nodejs-applications-with-helmet-3m85 (Securing Node.js Applications with Helmet)

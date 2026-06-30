@@ -53,35 +53,40 @@ In context of Nepal cinema halls like QFX, Big Movies:
 Seat Layout (200 seats - 20 rows × 10 seats):
 
 SCREEN
-━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-ROW A → A1 A2 A3 A4 A5 A6 A7 A8 A9 A10
-ROW B → B1 B2 B3 B4 B5 B6 B7 B8 B9 B10
-ROW C → C1 C2 C3 C4 C5 C6 C7 C8 C9 C10
-ROW D → D1 D2 D3 D4 D5 D6 D7 D8 D9 D10
-ROW E → E1 E2 E3 E4 E5 E6 E7 E8 E9 E10
-ROW F → F1 F2 F3 F4 F5 F6 F7 F8 F9 F10
-━━━━━━━━━━━━━━━━━━ STANDARD (Rows A-F) Rs.300-350 ━━━
+ROW A → A1-A10 STANDARD Rs.300 (index 0)
+ROW B → B1-B10 STANDARD Rs.310 (index 1)
+ROW C → C1-C10 STANDARD Rs.320 (index 2)
+ROW D → D1-D10 STANDARD Rs.330 (index 3)
+ROW E → E1-E10 STANDARD Rs.340 (index 4)
+ROW F → F1-F10 STANDARD Rs.350 (index 5)
+━━━━━━━━ STANDARD (60 seats, Rs.300-350) ━━━━━━━━
 
-ROW G → G1 G2 G3 G4 G5 G6 G7 G8 G9 G10
-ROW H → H1 H2 H3 H4 H5 H6 H7 H8 H9 H10
-ROW I → I1 I2 I3 I4 I5 I6 I7 I8 I9 I10
-ROW J → J1 J2 J3 J4 J5 J6 J7 J8 J9 J10
-ROW K → K1 K2 K3 K4 K5 K6 K7 K8 K9 K10
-ROW L → L1 L2 L3 L4 L5 L6 L7 L8 L9 L10
-ROW M → M1 M2 M3 M4 M5 M6 M7 M8 M9 M10
-ROW N → N1 N2 N3 N4 N5 N6 N7 N8 N9 N10
-━━━━━━━━━━━━━━━━━━ PREMIUM (Rows G-N) Rs.500-600 ━━━━
+ROW G → G1-G10 PREMIUM Rs.500 (index 6)
+ROW H → H1-H10 PREMIUM Rs.510 (index 7)
+ROW I → I1-I10 PREMIUM Rs.520 (index 8)
+ROW J → J1-J10 PREMIUM Rs.530 (index 9)
+ROW K → K1-K10 PREMIUM Rs.540 (index 10)
+ROW L → L1-L10 PREMIUM Rs.550 (index 11)
+ROW M → M1-M10 PREMIUM Rs.560 (index 12)
+ROW N → N1-N10 PREMIUM Rs.570 (index 13)
+━━━━━━━━ PREMIUM (80 seats, Rs.500-570) ━━━━━━━━
 
-ROW O → O1 O2 O3 O4 O5 O6 O7 O8 O9 O10
-ROW P → P1 P2 P3 P4 P5 P6 P7 P8 P9 P10
-ROW Q → Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9 Q10
-ROW R → R1 R2 R3 R4 R5 R6 R7 R8 R9 R10
-ROW S → S1 S2 S3 S4 S5 S6 S7 S8 S9 S10
-ROW T → T1 T2 T3 T4 T5 T6 T7 T8 T9 T10
-━━━━━━━━━━━━━━━━━━ VIP (Rows O-T) Rs.700-1000 ━━━━━━
+ROW O → O1-O10 VIP Rs.700 (index 14)
+ROW P → P1-P10 VIP Rs.750 (index 15)
+ROW Q → Q1-Q10 VIP Rs.800 (index 16)
+ROW R → R1-R10 VIP Rs.850 (index 17)
+ROW S → S1-S10 VIP Rs.900 (index 18)
+ROW T → T1-T10 VIP Rs.1000 (index 19)
+━━━━━━━━ VIP (60 seats, Rs.700-1000) ━━━━━━━━
 
-                    ^ BACK OF HALL ^
+BACK OF HALL
+
+Total: 200 seats ✅
+STANDARD: 60 seats (30%) ✅
+PREMIUM: 80 seats (40%) ✅
+VIP: 60 seats (30%) ✅
 
 about this layout:
 

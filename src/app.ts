@@ -9,6 +9,7 @@ import { connectDb } from "./config/db.js";
 import movieRouter from "./routes/movie.route.js";
 import theatreRouter from "./routes/theatre.route.js";
 import authRouter from "./routes/auth.route.js";
+import showRouter from "./routes/show.route.js";
 import errorHandler from "./middleware/errorHandler.js";
 
 dotenv.config();
@@ -30,6 +31,7 @@ app.use(
 app.use("/api/v1", movieRouter);
 app.use("/api/v1", theatreRouter);
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1", showRouter);
 
 app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ success: true });

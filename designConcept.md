@@ -39,19 +39,21 @@ Actor Profile
 
 ### Some relationship
 
+```
 Movie ←── Show ───→ Theatre
-
            ↑
            │
           Seat
            ↑
            │
          Booking ──→ User
+```
 
 In context of Nepal cinema halls like QFX, Big Movies:
 
 Seat Layout (200 seats - 20 rows × 10 seats):
 
+```
 SCREEN
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -82,90 +84,99 @@ ROW T → T1-T10 VIP Rs.1000 (index 19)
 ━━━━━━━━ VIP (60 seats, Rs.700-1000) ━━━━━━━━
 
 BACK OF HALL
+```
 
-Total: 200 seats ✅
-STANDARD: 60 seats (30%) ✅
-PREMIUM: 80 seats (40%) ✅
-VIP: 60 seats (30%) ✅
+- Total: 200 seats
+- STANDARD: 60 seats (30%)
+- PREMIUM: 80 seats (40%)
+- VIP: 60 seats (30%)
 
 about this layout:
 
-STANDARD (A-F) — front rows
-closest to screen
-slight neck strain
-cheapest — Rs.300-350
-60 seats (30%)
+- STANDARD (A-F) — front rows
+- closest to screen
+- slight neck strain
+- cheapest — Rs.300-350
+- 60 seats (30%)
 
-PREMIUM (G-N) — middle rows  
-best viewing angle
-most popular
-Rs.500-600
-80 seats (40%)
+- PREMIUM (G-N) — middle rows
+- best viewing angle
+- most popular
+- Rs.500-600
+  -80 seats (40%)
 
-VIP (O-T) — back rows
-farthest from screen
-most comfortable
-recliner seats in some halls
-Rs.700-1000
-60 seats (30%)
+- VIP (O-T) — back rows
+- farthest from screen
+- most comfortable
+- recliner seats in some halls
+- Rs.700-1000
+- 60 seats (30%)
 
 ### Challenges
 
 1. CONCURRENT SEAT BOOKING (hardest)
 
 Two users select same seat at exact same time
-→ both see seat as available
-→ both try to book
-→ race condition
+
+- both see seat as available
+- both try to book
+- race condition
 
 Solution:
-→ MongoDB transactions
-→ Optimistic locking
-→ Redis distributed locks
-→ Socket.io realtime updates
+
+- MongoDB transactions
+- Optimistic locking
+- Redis distributed locks
+- Socket.io realtime updates
 
 2. SEAT LOCK EXPIRY
 
 User locks seat but never pays
-→ seat stuck as locked forever
+
+- seat stuck as locked forever
 
 Solution:
-→ Bull job queue — auto release after 5 min
-→ TTL index on lockExpiresAt
-→ Socket.io emit seat available
+
+- Bull job queue — auto release after 5 min
+- TTL index on lockExpiresAt
+- Socket.io emit seat available
 
 3. PAYMENT FAILURES
 
 User pays but payment gateway fails
-→ money deducted but ticket not issued
-→ ticket issued but money not deducted
+
+- money deducted but ticket not issued
+- ticket issued but money not deducted
 
 Solution:
-→ Idempotency keys
-→ Webhook from payment gateway
-→ Pending → Confirmed → Failed states
+
+- Idempotency keys
+- Webhook from payment gateway
+- Pending → Confirmed → Failed states
 
 4. SHOW CANCELLATION (Optional)
 
 Admin cancels a show
-→ all bookings need refund
-→ all seats need to be freed
-→ all users need notification
+
+- all bookings need refund
+- all seats need to be freed
+- all users need notification
 
 Solution:
-→ MongoDB transactions
-→ Bulk refund processing
-→ Email/SMS notification queue
+
+- MongoDB transactions
+- Bulk refund processing
+- Email/SMS notification queue
 
 ### Security
 
-Helmet → HTTP headers
-Rate limiting → prevent abuse
-CORS → configured properly
-bcrypt → password hashing
-express-mongo-sanitize (NoSQL injection)
-Input validation (Zod)
-Payment webhook verification
+- Helmet → HTTP headers
+- Rate limiting → prevent abuse
+- CORS → configured properly
+- bcrypt → password hashing
+- express-mongo-sanitize (NoSQL injection)
+- Input validation (Zod)
+- Payment webhook verification
 
 ### Jwt
 
@@ -179,21 +190,21 @@ one secret key → signs AND verifies
 JWT_SECRET = "mysecret123"
 
 BENEFITS:
-✅ simple — one secret key
-✅ fast — HMAC is faster than RSA
-✅ easy to implement
-✅ perfect for single server apps
-✅ less setup — no key pair generation
-✅ smaller token size
+
+- simple — one secret key
+- fast — HMAC is faster than RSA
+- easy to implement
+- perfect for single server apps
+- less setup — no key pair generation
+- smaller token size
 
 DISADVANTAGES:
-❌ secret must be shared with every service
-that needs to verify token
-❌ if secret leaks → attacker forges any token
-❌ not suitable for microservices
-❌ all services have signing power
-(any service can create tokens)
-❌ harder to rotate — must update all services
+
+- secret must be shared with every service that needs to verify token
+- if secret leaks → attacker forges any token
+- not suitable for microservices
+- all services have signing power(any service can create tokens)
+- harder to rotate — must update all services
 
 RS256 (asymmetric)
 
@@ -201,24 +212,24 @@ private key → signs token (only auth server has this)
 public key → verifies token (any service can have this)
 
 BENEFITS:
-✅ private key never leaves auth server
-✅ other services only need public key
-(cant forge tokens even if public key leaks)
-✅ perfect for microservices
-✅ industry standard (Google, GitHub, Auth0)
-✅ easy key distribution
-(public key can be shared openly)
-✅ supports JWKS (public key auto discovery)
-✅ clear separation of concerns
-only auth server can sign
-anyone can verify
+
+- private key never leaves auth server
+- other services only need public key (cant forge tokens even if public key leaks)
+- perfect for microservices
+- industry standard (Google, GitHub, Auth0)
+- easy key distribution (public key can be shared openly)
+- supports JWKS (public key auto discovery)
+- clear separation of concerns
+- only auth server can sign
+- anyone can verify
 
 DISADVANTAGES:
-❌ slower than HS256 (RSA math is complex)
-❌ larger token size
-❌ more complex setup
-❌ key pair management needed
-❌ overkill for single server apps
+
+- slower than HS256 (RSA math is complex)
+- larger token size
+- more complex setup
+- key pair management needed
+- overkill for single server apps
 
 for this project i will use the RS256 (asymmetric) cryptography method
 
@@ -238,16 +249,18 @@ i will store refresh token in DB:
 
 WITHOUT storing in DB
 user logs out
-→ refresh token still valid for 7 days
-→ attacker who stole token can still get new access tokens
-→ no way to invalidate it
+
+- refresh token still valid for 7 days
+- attacker who stole token can still get new access tokens
+- no way to invalidate it
 
 // WITH storing in DB
 user logs out
-→ clear refreshToken from DB
-→ attacker tries to use stolen token
-→ server checks DB → token not found
-→ access denied
+
+- clear refreshToken from DB
+- attacker tries to use stolen token
+- server checks DB → token not found
+- access denied
 
 // other scenarios where DB storage helps
 user changes password → clear all refresh tokens
@@ -256,6 +269,9 @@ suspicious activity → revoke all sessions
 
 ### Resource
 
+```
 https://github.com/jlgriff/jwt-asymmetric-authentication/ for RS256 (asymmetric) JWT
 https://github.com/ryder-tech/nodejs-advance/ for RS256 (asymmetric) JWT
 https://dev.to/sagarmuchhal/securing-nodejs-applications-with-helmet-3m85 (Securing Node.js Applications with Helmet)
+https://medium.com/@saudpatel.mscit22/server-side-validation-and-sanitization-using-zod-in-node-js-55e46e126635 (Server-Side Validation and Sanitization using Zod)
+```

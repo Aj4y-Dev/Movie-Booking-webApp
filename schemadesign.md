@@ -22,8 +22,8 @@
 
 ### Relationship between each other:
 
-- User with Theatre [One-to-Many (1:N)] One theatre owner can own multiple theatres.
-- User with Movie [One-to-Many (1:N)] One admin can create many movies.
+- User with Theatre [One-to-Many (1:N)] One USER owner can own multiple theatres.
+- User with Movie [One-to-Many (1:N)] One USER can create many movies.
 - Movie with Show [One-to-Many (1:N)] One movie can have many shows.
 - Theatre with Show [One-to-Many (1:N)] One theatre hosts many shows.
 - Show with Seat [One-to-Many (1:N)] One show has many seat states (Available, Locked, Booked).

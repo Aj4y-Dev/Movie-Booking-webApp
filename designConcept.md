@@ -273,5 +273,5 @@ suspicious activity → revoke all sessions
 https://github.com/jlgriff/jwt-asymmetric-authentication/ for RS256 (asymmetric) JWT
 https://github.com/ryder-tech/nodejs-advance/ for RS256 (asymmetric) JWT
 https://dev.to/sagarmuchhal/securing-nodejs-applications-with-helmet-3m85 (Securing Node.js Applications with Helmet)
-https://medium.com/@saudpatel.mscit22/server-side-validation-and-sanitization-using-zod-in-node-js-55e46e126635 (Server-Side Validation and Sanitization using Zod)
+https://medium.com/@saudpatel.mscit22/server-side-validation-and-sanitization-using-zod-in-node-js-55e46e126635 & https://zod.dev/ (Server-Side Validation and Sanitization using Zod)
 ```

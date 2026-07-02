@@ -6,11 +6,11 @@ export interface IShow {
   showTime: Date;
   totalSeats: number;
   availableSeats: number;
-  status: "ACTIVE" | "CANCELLED" | "COMPLETED";
-  createdBy: mongoose.Types.ObjectId;
   standardPrice: number;
   premiumPrice: number;
   vipPrice: number;
+  status: "ACTIVE" | "CANCELLED" | "COMPLETED";
+  createdBy: mongoose.Types.ObjectId;
 }
 
 const showSchema = new mongoose.Schema<IShow>(
@@ -39,11 +39,6 @@ const showSchema = new mongoose.Schema<IShow>(
       required: true,
       min: [0, "Available seats cannot be negative"],
     },
-    status: {
-      type: String,
-      enum: ["ACTIVE", "CANCELLED", "COMPLETED"],
-      default: "ACTIVE",
-    },
     standardPrice: {
       type: Number,
       required: true,
@@ -61,6 +56,16 @@ const showSchema = new mongoose.Schema<IShow>(
       required: true,
       default: 700,
       min: [0, "Price cannot be negative"],
+    },
+    status: {
+      type: String,
+      enum: ["ACTIVE", "CANCELLED", "COMPLETED"],
+      default: "ACTIVE",
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
   },
   { timestamps: true },

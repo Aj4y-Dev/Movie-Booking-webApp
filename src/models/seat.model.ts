@@ -47,7 +47,6 @@ const seatSchema = new mongoose.Schema<ISeat>(
       default: false,
     },
     bookedBy: {
-      //the user schema need to create
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       default: null,
@@ -68,7 +67,7 @@ const seatSchema = new mongoose.Schema<ISeat>(
     lockExpiresAt: {
       type: Date,
       default: null,
-      // TTL handled in controller — after this time seat is free
+      // TTL handled in controller after this time seat is free
     },
   },
   { timestamps: true },

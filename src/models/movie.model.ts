@@ -9,6 +9,7 @@ export interface IMovie {
   releaseDate: Date;
   director: string;
   releaseStatus: "PENDING" | "UPCOMING" | "RELEASED";
+  createdBy: mongoose.Types.ObjectId;
 }
 
 const movieSchema = new mongoose.Schema<IMovie>(
@@ -54,6 +55,11 @@ const movieSchema = new mongoose.Schema<IMovie>(
       enum: ["PENDING", "UPCOMING", "RELEASED"],
       default: "PENDING",
     },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   { timestamps: true },
 );
@@ -63,6 +69,7 @@ movieSchema.index({ language: 1 });
 movieSchema.index({ releaseDate: -1 }); // -1 = descending, latest first
 movieSchema.index({ name: 1 });
 movieSchema.index({ director: 1 });
+movieSchema.index({ createdBy: 1 });
 
 const Movie = mongoose.model<IMovie>("Movie", movieSchema);
 

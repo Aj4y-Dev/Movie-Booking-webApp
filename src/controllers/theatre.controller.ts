@@ -30,14 +30,10 @@ class TheatreController {
 
   //Create new Theater
   createNewTheatre = asyncHandler(async (req: Request, res: Response) => {
-    const { name, description, city, postalCode, address, ownerId } = req.body;
+    const { name, description, city, postalCode, address } = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(ownerId))
-      throw new AppError("Invalid id", 400);
-
-    if (!name || !city || !postalCode || !address || !ownerId) {
+    if (!name || !city || !postalCode || !address)
       throw new AppError("All fields required", 400);
-    }
 
     const createTheatre = new Theatre({
       name,
@@ -45,7 +41,7 @@ class TheatreController {
       city,
       postalCode,
       address,
-      owner: ownerId,
+      owner: req.user?.id,
     });
 
     const theatre = await createTheatre.save();

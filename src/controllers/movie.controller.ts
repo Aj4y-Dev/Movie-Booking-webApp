@@ -62,6 +62,7 @@ class MovieController {
       releaseDate,
       director,
       releaseStatus,
+      createdBy: req.user?.id,
     });
 
     const saveMovie = await movie.save();

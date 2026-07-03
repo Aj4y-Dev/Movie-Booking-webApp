@@ -1,19 +1,11 @@
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
-
-import dotenv from "dotenv";
-dotenv.config();
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const loadKey = (filename: string): string => {
-  const keyPath = path.join(__dirname, "../keys", filename);
+  const keyPath = path.join(process.cwd(), "src", "keys", filename);
 
   if (!fs.existsSync(keyPath)) {
-    throw new Error(
-      `Key file not found: ${filename} — run: openssl genrsa -out src/keys/private.pem 2048`,
-    );
+    throw new Error(`Key file not found: ${filename}`);
   }
 
   return fs.readFileSync(keyPath, "utf8");

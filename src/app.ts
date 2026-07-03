@@ -14,6 +14,7 @@ import theatreRouter from "./routes/theatre.route.js";
 import authRouter from "./routes/auth.route.js";
 import showRouter from "./routes/show.route.js";
 import bookRouter from "./routes/booking.route.js";
+import paymentRouter from "./routes/payment.route.js";
 import AppError from "./utils/AppError.js";
 import errorHandler from "./middleware/errorHandler.js";
 
@@ -40,6 +41,7 @@ app.use("/api/v1", theatreRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1", showRouter);
 app.use("/api/vq", bookRouter);
+app.use("/api/v1", paymentRouter);
 
 app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ success: true });

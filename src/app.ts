@@ -5,7 +5,10 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 
+import { initSocket } from "./socket/index.js";
+import { createServer } from "http";
 import { connectDb } from "./config/db.js";
+import { cleanupExpiredLocks } from "./utils/seatLockCleanup.js";
 import movieRouter from "./routes/movie.route.js";
 import theatreRouter from "./routes/theatre.route.js";
 import authRouter from "./routes/auth.route.js";
@@ -17,7 +20,8 @@ import errorHandler from "./middleware/errorHandler.js";
 dotenv.config();
 
 const app = express();
-
+const httpServer = createServer(app); // http server wraps express
+initSocket(httpServer); // attach socket.io to http server
 const port = process.env.PORT;
 
 app.use(express.json());
@@ -43,11 +47,13 @@ app.get("/health", (req: Request, res: Response) => {
 
 app.use(errorHandler);
 
+setInterval(cleanupExpiredLocks, 60 * 1000);
+
 if (!port) {
   throw new AppError("port number is missing", 500);
 }
 
-app.listen(port, () => {
-  connectDb(process.env.MONGO_DB_URL!); //! Trust me, this value isn't undefined.
+httpServer.listen(port, () => {
+  connectDb(process.env.MONGO_DB_URL!);
   console.log(`App is listen in port: ${port}`);
 });

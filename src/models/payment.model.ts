@@ -46,7 +46,6 @@ const paymentSchema = new mongoose.Schema<IPayment>(
 
 paymentSchema.index({ booking: 1 });
 paymentSchema.index({ user: 1 });
-paymentSchema.index({ transactionId: 1 }, { unique: true });
 paymentSchema.index({ status: 1 });
 
 const Payment = mongoose.model<IPayment>("Payment", paymentSchema);

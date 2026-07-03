@@ -5,7 +5,7 @@ export interface IBooking {
   show: mongoose.Types.ObjectId;
   seats: mongoose.Types.ObjectId[];
   totalAmount: number;
-  status: "PENDING" | "CONFIRMED" | "CANCELLED" | "REUNDED";
+  status: "PENDING" | "CONFIRMED" | "CANCELLED" | "REFUNDED";
   paymentStatus: "PENDING" | "PAID" | "FAILED" | "REFUNDED";
   paymentId?: string;
   bookedAt: Date;

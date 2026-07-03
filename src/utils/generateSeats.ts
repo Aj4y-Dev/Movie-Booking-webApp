@@ -40,7 +40,7 @@ const getSeatPrice = (
     return Math.min(price.premiumPrice + premiumRowIndex * 10, 600); //Math.min(..., 600) is just a SAFETY CAP i.e price wont accidentally exceed 600
   }
 
-  //STANDARD and PREMIUM have linear pricing (+10 per row) but according to your layout, VIP has BIGGER jumps, so instead of a formula, we just hardcode each row's exact price
+  //STANDARD and PREMIUM have linear pricing (+10 per row) but according to our layout, VIP has BIGGER jumps, so instead of a formula, we just hardcode each row's exact price
   // O-T: with bigger price jumps (700, 750, 800, 850, 900, 1000)
   const vipPrices = [700, 750, 800, 850, 900, 1000];
   const vipRowIndex = rowIndex - 14;

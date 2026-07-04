@@ -18,6 +18,9 @@ import paymentRouter from "./routes/payment.route.js";
 import AppError from "./utils/AppError.js";
 import errorHandler from "./middleware/errorHandler.js";
 
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./config/swagger.js";
+
 dotenv.config();
 
 const app = express();
@@ -42,6 +45,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1", showRouter);
 app.use("/api/vq", bookRouter);
 app.use("/api/v1", paymentRouter);
+app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get("/health", (req: Request, res: Response) => {
   res.status(200).json({ success: true });

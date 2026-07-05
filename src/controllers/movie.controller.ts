@@ -53,6 +53,22 @@ class MovieController {
       throw new AppError("All fields are required", 400);
     }
 
+    // Ensure user is authenticated
+    if (!req.user) {
+      throw new AppError("Unauthorized", 401);
+    }
+
+    // Check if the movie already exists
+    const existingMovie = await Movie.findOne({
+      name: name.trim(),
+      director: director.trim(),
+      releaseDate: new Date(releaseDate),
+    });
+
+    if (existingMovie) {
+      throw new AppError("Movie already exists", 409);
+    }
+
     const movie = new Movie({
       name,
       description,

@@ -1,6 +1,7 @@
 import express from "express";
 import bookingController from "../controllers/booking.controller.js";
 import { protect, authorizeRoles } from "../middleware/auth.middleware.js";
+import { bookingLimiter } from "../middleware/rateLimiter.js";
 
 const router = express.Router();
 
@@ -36,6 +37,7 @@ router.post(
   "/booking",
   protect,
   authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  bookingLimiter,
   bookingController.createBooking,
 );
 

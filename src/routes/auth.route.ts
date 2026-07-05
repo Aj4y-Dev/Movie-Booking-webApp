@@ -1,6 +1,7 @@
 import express from "express";
 import authController from "../controllers/auth.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
+import { authLimiter } from "../middleware/rateLimiter.js";
 
 const router = express.Router();
 
@@ -34,7 +35,7 @@ const router = express.Router();
  *       409:
  *         description: Email already exists
  */
-router.post("/register", authController.register);
+router.post("/register", authLimiter, authController.register);
 
 /**
  * @swagger
@@ -63,7 +64,7 @@ router.post("/register", authController.register);
  *       401:
  *         description: Invalid credentials
  */
-router.post("/login", authController.login);
+router.post("/login", authLimiter, authController.login);
 
 /**
  * @swagger
@@ -78,7 +79,7 @@ router.post("/login", authController.login);
  *       401:
  *         description: Invalid or expired refresh token
  */
-router.post("/refresh", authController.refreshAccessToken);
+router.post("/refresh", authLimiter, authController.refreshAccessToken);
 
 /**
  * @swagger

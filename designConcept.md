@@ -263,9 +263,40 @@ user logs out
 - access denied
 
 // other scenarios where DB storage helps
-user changes password → clear all refresh tokens
-admin bans user → clear refresh token
-suspicious activity → revoke all sessions
+
+- user changes password → clear all refresh tokens
+- admin bans user → clear refresh token
+- suspicious activity → revoke all sessions
+
+### Rate-limiting
+
+Without rate limiting, anyone can hammer your API endpoints as fast as their internet connection allows. That means a brute force script can try thousands of passwords in seconds, a bot can spam your booking system faster than real users can even load the page, and a fraudster can test stolen credit cards against your payment endpoint all night without being stopped.
+
+Most rate limiters key by IP address. That is the obvious choice but also the weakest one. An attacker running a simple Python script can rotate fake IPs using the `X-Forwarded-For` header and bypass an IP-based limiter in seconds.
+
+This implementation avoids that by choosing a smarter key depending on what information is available on the request:
+
+```
+1. Authenticated user    →  userId from the verified JWT token
+2. Login or register     →  SHA-256 hash of the email address
+3. Everything else       →  real TCP socket address (not X-Forwarded-For)
+```
+
+The logic in order of priority:
+
+**userId** is the strongest key. It comes from a JWT that the server signed itself. An attacker cannot forge it without the private key. Rotating IPs, changing headers, using proxies — none of it matters. The user is the user.
+
+**Email hash** is used for login and register because those requests arrive before the user is authenticated, so there is no JWT yet. The email is hashed with SHA-256 before being used as the key so plain email addresses are never stored in memory. The important thing is that the attacker has one target email address. No matter how many IPs they rotate, the email stays the same, so the bucket stays the same.
+
+**Real socket address** is the fallback for truly anonymous public requests with no email and no token. This reads from `req.socket.remoteAddress` rather than `req.ip` or `req.headers["x-forwarded-for"]`. The socket address reflects the actual TCP connection and cannot be manipulated at the application layer the way headers can.
+
+| Limiter         | Route                                 | Reason                         |
+| --------------- | ------------------------------------- | ------------------------------ |
+| generalLimiter  | all routes (app.use)                  | scanner and scraper protection |
+| authLimiter     | POST /auth/login, POST /auth/register | brute force prevention         |
+| seatLockLimiter | POST /seats/lock                      | seat hoarding prevention       |
+| bookingLimiter  | POST /booking                         | spam booking prevention        |
+| paymentLimiter  | POST /payment/initiate                | card testing prevention        |
 
 ### Resource
 
@@ -276,4 +307,5 @@ https://dev.to/sagarmuchhal/securing-nodejs-applications-with-helmet-3m85 (Secur
 https://medium.com/@nalaka_sampath/a-comprehensive-guide-to-socket-io-building-real-time-applications-5746171e647e(socket.io)
 http://developer.esewa.com.np/pages/Token#payment(esewa)
 https://mongoosejs.com/docs/transactions.html(Transactions in Mongoose)
+https://medium.com/appfoster/implementing-rate-limiting-in-express-js-a-hands-on-guide-1aac3570d53c(rate limiting)
 ```

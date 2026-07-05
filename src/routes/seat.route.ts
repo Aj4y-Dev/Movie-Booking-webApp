@@ -1,6 +1,7 @@
 import express from "express";
 import seatController from "../controllers/seat.controller.js";
 import { protect, authorizeRoles } from "../middleware/auth.middleware.js";
+import { seatLockLimiter } from "../middleware/rateLimiter.js";
 
 const router = express.Router();
 
@@ -55,6 +56,7 @@ router.post(
   "/seats/lock",
   protect,
   authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  seatLockLimiter,
   seatController.lockSeats,
 );
 

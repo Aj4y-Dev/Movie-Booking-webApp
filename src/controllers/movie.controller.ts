@@ -80,10 +80,16 @@ class MovieController {
     if (!Object.keys(req.body).length)
       throw new AppError("No valid fields provided to update", 400);
 
-    const updatedMovie = await Movie.findByIdAndUpdate(
-      id,
-      { ...req.body },
-      { returnDocument: "after", runValidators: true },
+    const updatedMovie = await Movie.findOneAndUpdate(
+      {
+        _id: id,
+        createdBy: req.user?.id,
+      },
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      },
     );
 
     if (!updatedMovie) throw new AppError("Movie not found", 404);
@@ -98,7 +104,10 @@ class MovieController {
     if (!mongoose.Types.ObjectId.isValid(id))
       throw new AppError("Invalid id format", 400);
 
-    const deletedMovie = await Movie.findByIdAndDelete(id);
+    const deletedMovie = await Movie.findOneAndDelete({
+      _id: id,
+      createdBy: req.user?.id,
+    });
 
     if (!deletedMovie) throw new AppError("Movie not found", 404);
 

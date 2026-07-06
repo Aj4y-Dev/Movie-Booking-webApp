@@ -30,9 +30,9 @@ class TheatreController {
 
   //Create new Theater
   createNewTheatre = asyncHandler(async (req: Request, res: Response) => {
-    const { name, description, city, postalCode, address } = req.body;
+    const { name, description, city, postalCode, address, owner } = req.body;
 
-    if (!name || !city || !postalCode || !address)
+    if (!name || !city || !postalCode || !address || !owner)
       throw new AppError("All fields required", 400);
 
     const createTheatre = new Theatre({
@@ -41,7 +41,8 @@ class TheatreController {
       city,
       postalCode,
       address,
-      owner: req.user?.id,
+      owner,
+      createdBy: req.user?.id,
     });
 
     const theatre = await createTheatre.save();
@@ -56,10 +57,16 @@ class TheatreController {
     if (!mongoose.Types.ObjectId.isValid(id))
       throw new AppError("Invalid id format", 400);
 
-    const updateTheatre = await Theatre.findByIdAndUpdate(
-      id,
-      { ...req.body },
-      { returnDocument: "after", runValidators: true },
+    const updateTheatre = await Theatre.findOneAndUpdate(
+      {
+        _id: id,
+        createdBy: req.user?.id,
+      },
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      },
     );
 
     if (!updateTheatre) throw new AppError("Theatre not found", 404);
@@ -74,7 +81,10 @@ class TheatreController {
     if (!mongoose.Types.ObjectId.isValid(id))
       throw new AppError("Invalid id format", 400);
 
-    const deleteTheatre = await Theatre.findByIdAndDelete(id);
+    const deleteTheatre = await Theatre.findOneAndDelete({
+      _id: id,
+      createdBy: req.user?.id,
+    });
 
     if (!deleteTheatre) throw new AppError("Theatre not found", 404);
 

@@ -7,6 +7,7 @@ export interface ITheatre {
   postalCode: string;
   address: string;
   owner: mongoose.Types.ObjectId; // CLIENT who owns this theatre
+  createdBy: mongoose.Types.ObjectId;
 }
 
 const theatreSchema = new mongoose.Schema<ITheatre>(
@@ -44,6 +45,11 @@ const theatreSchema = new mongoose.Schema<ITheatre>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true, // CLIENT who owns and manages this theatre
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
   },
   {

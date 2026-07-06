@@ -9,7 +9,7 @@ class TheatreController {
   getAllTheatres = asyncHandler(async (req: Request, res: Response) => {
     const theatres = await Theatre.find();
 
-    if (!theatres.length) throw new AppError("No Theatres found", 404);
+    if (!theatres) throw new AppError("No Theatres found", 404);
 
     res.status(200).json({ success: true, theatres });
   });
@@ -69,7 +69,8 @@ class TheatreController {
       },
     );
 
-    if (!updateTheatre) throw new AppError("Theatre not found", 404);
+    if (!updateTheatre)
+      throw new AppError("Theatre not found or unauthorized theatre", 404);
 
     res.status(200).json({ success: true, updateTheatre });
   });
@@ -86,7 +87,8 @@ class TheatreController {
       createdBy: req.user?.id,
     });
 
-    if (!deleteTheatre) throw new AppError("Theatre not found", 404);
+    if (!deleteTheatre)
+      throw new AppError("Theatre not found or unauthorized theatre", 404);
 
     res.status(200).json({ success: true, deleteTheatre });
   });

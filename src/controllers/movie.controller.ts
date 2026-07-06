@@ -108,7 +108,8 @@ class MovieController {
       },
     );
 
-    if (!updatedMovie) throw new AppError("Movie not found", 404);
+    if (!updatedMovie)
+      throw new AppError("Movie not found or unauthorized movie", 404);
 
     res.status(200).json({ success: true, updatedMovie });
   });
@@ -125,7 +126,8 @@ class MovieController {
       createdBy: req.user?.id,
     });
 
-    if (!deletedMovie) throw new AppError("Movie not found", 404);
+    if (!deletedMovie)
+      throw new AppError("Movie not found or unauthorized movie", 404);
 
     res.status(200).json({ success: true, deletedMovie });
   });

@@ -55,7 +55,7 @@ router.get("/seats/:showId", seatController.getShowSeats);
 router.post(
   "/seats/lock",
   protect,
-  authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  authorizeRoles("CLIENT", "USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
   seatLockLimiter,
   seatController.lockSeats,
 );
@@ -87,7 +87,7 @@ router.post(
 router.post(
   "/seats/release",
   protect,
-  authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  authorizeRoles("CLIENT", "USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
   seatController.releaseLock,
 );
 

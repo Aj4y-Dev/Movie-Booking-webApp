@@ -127,7 +127,15 @@ class SeatController {
       };
     });
 
-    res.status(200).json({ success: true, seats: seatsWithState });
+    const summary = {
+      total: seatsWithState.length,
+      available: seatsWithState.filter((s) => s.state === "AVAILABLE").length,
+      locked: seatsWithState.filter((s) => s.state === "LOCKED").length,
+      myLocked: seatsWithState.filter((s) => s.state === "MY_LOCK").length,
+      booked: seatsWithState.filter((s) => s.state === "BOOKED").length,
+    };
+
+    res.status(200).json({ success: true, summary, seats: seatsWithState });
   });
 }
 

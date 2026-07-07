@@ -29,7 +29,7 @@ const router = express.Router();
 router.post(
   "/payment/initiate",
   protect,
-  authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  authorizeRoles("CLIENT", "SYSTEM_ADMIN", "ROOT_ADMIN"),
   paymentLimiter,
   paymentController.initiatePayment,
 );
@@ -91,7 +91,7 @@ router.get("/payment/esewa/failure", paymentController.esewaFailure);
 router.get(
   "/payment/status/:bookingId",
   protect,
-  authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  authorizeRoles("CLIENT", "SYSTEM_ADMIN", "ROOT_ADMIN"),
   paymentController.getPaymentStatus,
 );
 

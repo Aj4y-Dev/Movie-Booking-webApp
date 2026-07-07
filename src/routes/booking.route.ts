@@ -36,7 +36,7 @@ const router = express.Router();
 router.post(
   "/booking",
   protect,
-  authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  authorizeRoles("CLIENT", "SYSTEM_ADMIN", "ROOT_ADMIN"),
   bookingLimiter,
   bookingController.createBooking,
 );
@@ -54,7 +54,7 @@ router.post(
 router.get(
   "/bookings/my",
   protect,
-  authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  authorizeRoles("CLIENT", "SYSTEM_ADMIN", "ROOT_ADMIN"),
   bookingController.getMyBookings,
 );
 
@@ -79,7 +79,7 @@ router.get(
 router.get(
   "/booking/:id",
   protect,
-  authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  authorizeRoles("CLIENT", "SYSTEM_ADMIN", "ROOT_ADMIN"),
   bookingController.getBooking,
 );
 
@@ -102,7 +102,7 @@ router.get(
 router.patch(
   "/booking/:id/cancel",
   protect,
-  authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  authorizeRoles("CLIENT", "SYSTEM_ADMIN", "ROOT_ADMIN"),
   bookingController.cancelBooking,
 );
 

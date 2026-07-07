@@ -1,4 +1,6 @@
 import { createHmac } from "node:crypto";
+import dotenv from "dotenv";
+dotenv.config();
 
 const ESEWA_SECRET_KEY = process.env.ESEWA_SECRET_KEY!;
 const ESEWA_PRODUCT_CODE = process.env.ESEWA_PRODUCT_CODE!;

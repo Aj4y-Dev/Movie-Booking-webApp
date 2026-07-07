@@ -307,5 +307,6 @@ https://dev.to/sagarmuchhal/securing-nodejs-applications-with-helmet-3m85 (Secur
 https://medium.com/@nalaka_sampath/a-comprehensive-guide-to-socket-io-building-real-time-applications-5746171e647e(socket.io)
 http://developer.esewa.com.np/pages/Token#payment(esewa)
 https://mongoosejs.com/docs/transactions.html(Transactions in Mongoose)
+https://medium.com/@samuelnoye35/simplifying-api-development-in-node-js-with-swagger-a5021ac45742(swagger api doc)
 https://medium.com/appfoster/implementing-rate-limiting-in-express-js-a-hands-on-guide-1aac3570d53c(rate limiting)
 ```

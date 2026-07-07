@@ -13,6 +13,7 @@ const canManageShow = (
   user?: { id: string; role: string },
 ): boolean => {
   if (!user) return false;
+  if (!theatre?.owner) return false;
   const isOwner = theatre.owner.toString() === user.id;
   const isAdmin = user.role === "SYSTEM_ADMIN" || user.role === "ROOT_ADMIN";
   return isOwner || isAdmin;
@@ -75,6 +76,7 @@ class ShowController {
       premiumPrice: premiumPrice || 500,
       vipPrice: vipPrice || 700,
       createdBy: req.user?.id,
+      status: "ACTIVE",
     });
 
     // auto generate seats based on totalSeats
@@ -117,7 +119,6 @@ class ShowController {
       .sort({ showTime: 1 });
 
     if (!shows.length) throw new AppError("No shows found for this movie", 404);
-
     res.status(200).json({ success: true, shows });
   });
 
@@ -134,7 +135,6 @@ class ShowController {
 
     if (!shows.length)
       throw new AppError("No shows found for this theatre", 404);
-
     res.status(200).json({ success: true, shows });
   });
 
@@ -153,7 +153,7 @@ class ShowController {
 
     // get all seats for this show, sorted by row and seat number
     const seats = await Seat.find({ show: id })
-      .select("seatNumber row type price isBooked isLocked lockExpiresAt")
+      .select("seatNumber row type price isBooked isLocked")
       .sort({ row: 1, seatNumber: 1 });
 
     res.status(200).json({ success: true, show, seats });
@@ -161,15 +161,21 @@ class ShowController {
 
   // get shows created by current logged in user (theatre owner)
   getMyShows = asyncHandler(async (req: Request, res: Response) => {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
     const shows = await Show.find({ createdBy: req.user?.id })
       .populate("movie", "name")
       .populate("theatre", "name city")
-      .sort({ showTime: -1 });
+      .sort({ showTime: -1 })
+      .skip(skip)
+      .limit(limit);
 
     if (!shows.length)
       throw new AppError("You have not created any shows yet", 404);
 
-    res.status(200).json({ success: true, shows });
+    res.status(200).json({ success: true, page, limit, shows });
   });
 
   // update show: only before any booking exists, owner, SYSTEM_ADMIN or ROOT_ADMIN
@@ -189,10 +195,15 @@ class ShowController {
       throw new AppError("You can only update your own shows", 403);
     }
 
-    // prevent updating if seats are already booked
-    if (show.availableSeats !== show.totalSeats) {
+    // check locked or booked seats to prevent race condition during payment
+    const lockedOrBookedSeats = await Seat.countDocuments({
+      show: id,
+      $or: [{ isBooked: true }, { isLocked: true }],
+    });
+
+    if (lockedOrBookedSeats > 0) {
       throw new AppError(
-        "Cannot update show — bookings already exist. Cancel and create a new show instead.",
+        "Cannot update show : seats are locked or booked",
         400,
       );
     }
@@ -259,10 +270,15 @@ class ShowController {
       throw new AppError("You can only delete your own shows", 403);
     }
 
-    // safety check — prevent deleting shows with existing bookings
-    if (show.availableSeats !== show.totalSeats) {
+    // check locked or booked seats to prevent race condition during payment
+    const lockedOrBookedSeats = await Seat.countDocuments({
+      show: id,
+      $or: [{ isBooked: true }, { isLocked: true }],
+    });
+
+    if (lockedOrBookedSeats > 0) {
       throw new AppError(
-        "Cannot delete show with existing bookings. Cancel it instead.",
+        "Cannot delete show : seats are locked or booked. Cancel instead.",
         400,
       );
     }

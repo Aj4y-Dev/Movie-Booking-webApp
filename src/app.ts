@@ -16,6 +16,7 @@ import showRouter from "./routes/show.route.js";
 import seatRouter from "./routes/seat.route.js";
 import bookRouter from "./routes/booking.route.js";
 import paymentRouter from "./routes/payment.route.js";
+import analyticsRouter from "./routes/analytics.route.js";
 import AppError from "./utils/AppError.js";
 import errorHandler from "./middleware/errorHandler.js";
 
@@ -49,6 +50,7 @@ app.use("/api/v1", showRouter);
 app.use("/api/v1", seatRouter);
 app.use("/api/v1", bookRouter);
 app.use("/api/v1", paymentRouter);
+app.use("/api/v1", analyticsRouter);
 app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get("/health", (req: Request, res: Response) => {

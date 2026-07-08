@@ -4,6 +4,7 @@ import AppError from "../utils/AppError.js";
 import mongoose from "mongoose";
 import Theatre from "../models/theatre.model.js";
 import Booking from "../models/booking.model.js";
+import Payment from "../models/payment.model.js";
 
 class AnalyticsController {
   // get full analytics for theatre owner
@@ -181,6 +182,215 @@ class AnalyticsController {
       { $sort: { revenue: -1 } },
     ]);
 
+    //4. monthly revenue
+    const monthlyRevenue = await Booking.aggregate([
+      {
+        $lookup: {
+          from: "shows",
+          localField: "show",
+          foreignField: "_id",
+          as: "showData",
+        },
+      },
+      { $unwind: "$showData" },
+      {
+        $match: {
+          "showData.theatre": { $in: theatreIds },
+          status: "CONFIRMED",
+          paymentStatus: "PAID",
+        },
+      },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$bookedAt" },
+            month: { $month: "$bookedAt" },
+          },
+          revenue: { $sum: "$totalAmount" },
+          bookings: { $count: {} },
+        },
+      },
+      { $sort: { "_id.year": -1, "_id.month": -1 } }, // latest first
+      { $limit: 12 }, // last 12 months
+      {
+        $project: {
+          _id: 0,
+          year: "$_id.year",
+          month: "$_id.month",
+          revenue: 1,
+          bookings: 1,
+        },
+      },
+    ]);
+
+    //5. seat type breakdown
+    // how much revenue from STANDARD vs PREMIUM vs VIP
+
+    const seatTypeRevenue = await Booking.aggregate([
+      {
+        $lookup: {
+          from: "shows",
+          localField: "show",
+          foreignField: "_id",
+          as: "showData",
+        },
+      },
+      { $unwind: "$showData" },
+      {
+        $match: {
+          "showData.theatre": { $in: theatreIds },
+          status: "CONFIRMED",
+          paymentStatus: "PAID",
+        },
+      },
+      { $unwind: "$seats" }, // flatten seats array
+      {
+        $lookup: {
+          from: "seats",
+          localField: "seats",
+          foreignField: "_id",
+          as: "seatInfo",
+        },
+      },
+      { $unwind: "$seatInfo" },
+      {
+        $group: {
+          _id: "$seatInfo.type", // STANDARD, PREMIUM, VIP
+          revenue: { $sum: "$seatInfo.price" },
+          count: { $count: {} },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          type: "$_id",
+          revenue: 1,
+          count: 1,
+        },
+      },
+      { $sort: { revenue: -1 } },
+    ]);
+
+    //6. payment summary
+    const paymentSummary = await Payment.aggregate([
+      {
+        $lookup: {
+          from: "bookings",
+          localField: "booking",
+          foreignField: "_id",
+          as: "bookingData",
+        },
+      },
+      { $unwind: "$bookingData" },
+      {
+        $lookup: {
+          from: "shows",
+          localField: "bookingData.show",
+          foreignField: "_id",
+          as: "showData",
+        },
+      },
+      { $unwind: "$showData" },
+      {
+        $match: {
+          "showData.theatre": { $in: theatreIds },
+        },
+      },
+      {
+        $group: {
+          _id: "$status",
+          count: { $count: {} },
+          totalAmount: { $sum: "$amount" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          status: "$_id",
+          count: 1,
+          totalAmount: 1,
+        },
+      },
+    ]);
+
+    //7. top performing shows
+    const topShows = await Booking.aggregate([
+      {
+        $lookup: {
+          from: "shows",
+          localField: "show",
+          foreignField: "_id",
+          as: "showData",
+        },
+      },
+      { $unwind: "$showData" },
+      {
+        $match: {
+          "showData.theatre": { $in: theatreIds },
+          status: "CONFIRMED",
+          paymentStatus: "PAID",
+        },
+      },
+      {
+        $group: {
+          _id: "$show",
+          revenue: { $sum: "$totalAmount" },
+          bookings: { $count: {} },
+          showTime: { $first: "$showData.showTime" },
+          totalSeats: { $first: "$showData.totalSeats" },
+          availableSeats: { $first: "$showData.availableSeats" },
+        },
+      },
+      {
+        $lookup: {
+          from: "shows",
+          localField: "_id",
+          foreignField: "_id",
+          as: "showInfo",
+        },
+      },
+      { $unwind: "$showInfo" },
+      {
+        $lookup: {
+          from: "movies",
+          localField: "showInfo.movie",
+          foreignField: "_id",
+          as: "movieInfo",
+        },
+      },
+      { $unwind: { path: "$movieInfo", preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: "theatres",
+          localField: "showInfo.theatre",
+          foreignField: "_id",
+          as: "theatreInfo",
+        },
+      },
+      { $unwind: { path: "$theatreInfo", preserveNullAndEmptyArrays: true } },
+      {
+        $project: {
+          movieName: "$movieInfo.name",
+          theatreName: "$theatreInfo.name",
+          showTime: 1,
+          revenue: 1,
+          bookings: 1,
+          occupancyRate: {
+            $multiply: [
+              {
+                $divide: [
+                  { $subtract: ["$totalSeats", "$availableSeats"] },
+                  "$totalSeats",
+                ],
+              },
+              100,
+            ],
+          },
+        },
+      },
+      { $sort: { revenue: -1 } },
+      { $limit: 5 }, // top 5 shows
+    ]);
     res.status(200).json({
       success: true,
       analytics: {
@@ -191,6 +401,10 @@ class AnalyticsController {
         },
         revenuePerTheatre,
         revenuePerShow,
+        monthlyRevenue,
+        seatTypeRevenue,
+        paymentSummary,
+        topShows,
       },
     });
   });

@@ -24,7 +24,8 @@ export const getEsewaPaymentHash = ({
   transaction_uuid: string;
 }) => {
   const message = `total_amount=${amount},transaction_uuid=${transaction_uuid},product_code=${ESEWA_PRODUCT_CODE}`;
-  const signature = createHmac("sha256", ESEWA_SECRET_KEY) //HMAC (Hash-based Message Authentication Code) kind of digital signature
+
+  const signature = createHmac("sha256", ESEWA_SECRET_KEY)
     .update(message)
     .digest("base64");
 
@@ -60,7 +61,6 @@ const verifySignature = (decodedData: Record<string, string>): boolean => {
 
 // decode and verify eSewa success callback
 export const verifyEsewaPayment = async (data: string) => {
-  // decode base64 response from eSewa
   const decodedData = JSON.parse(
     Buffer.from(data, "base64").toString("utf-8"),
   ) as Record<string, string>;
@@ -71,18 +71,22 @@ export const verifyEsewaPayment = async (data: string) => {
   if (decodedData.status !== "COMPLETE")
     throw new Error("Payment not completed");
 
-  // double verify with eSewa status API
+  // skip external API verification in development
+  if (process.env.NODE_ENV !== "production") {
+    console.log("DEV MODE — skipping eSewa API verification");
+    return { decodedData, response: { status: "COMPLETE" } };
+  }
+
+  // production only — double verify with eSewa status API
   const url = new URL(ESEWA_VERIFY_URL);
   url.searchParams.set("product_code", ESEWA_PRODUCT_CODE);
   url.searchParams.set("transaction_uuid", decodedData.transaction_uuid);
   url.searchParams.set("total_amount", decodedData.total_amount);
 
   const response = await fetch(url.toString());
-
   if (!response.ok) throw new Error("eSewa verification API failed");
 
   const responseData = (await response.json()) as { status: string };
-
   if (responseData.status !== "COMPLETE")
     throw new Error("Payment verification failed with eSewa");
 

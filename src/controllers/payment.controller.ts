@@ -42,13 +42,11 @@ class PaymentController {
     });
 
     if (existingPayment) {
-      // reuse existing pending payment
       const paymentHash = getEsewaPaymentHash({
         amount: booking.totalAmount,
         transaction_uuid: existingPayment.transactionId,
       });
-
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         paymentHash,
         esewaUrl: ESEWA_PAYMENT_URL,
@@ -97,7 +95,7 @@ class PaymentController {
 
     // idempotency: already processed
     if (payment.status === "SUCCESS") {
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         message: "Payment already processed",
         bookingId: payment.booking,

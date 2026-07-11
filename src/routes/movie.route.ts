@@ -1,6 +1,11 @@
 import express from "express";
 import movieController from "../controllers/movie.controller.js";
 import { authorizeRoles, protect } from "../middleware/auth.middleware.js";
+import { validate } from "../middleware/validate.middleware.js";
+import {
+  createMovieSchema,
+  updateMovieSchema,
+} from "../validations/movie.validation.js";
 
 const router = express.Router();
 
@@ -123,6 +128,7 @@ router.post(
   "/movie",
   protect,
   authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  validate(createMovieSchema),
   movieController.createNewMovie,
 );
 
@@ -159,6 +165,7 @@ router.patch(
   "/movie/:id",
   protect,
   authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  validate(updateMovieSchema),
   movieController.updateSpecificMovie,
 );
 

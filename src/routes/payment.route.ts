@@ -2,6 +2,8 @@ import express from "express";
 import paymentController from "../controllers/payment.controller.js";
 import { protect, authorizeRoles } from "../middleware/auth.middleware.js";
 import { paymentLimiter } from "../middleware/rateLimiter.js";
+import { validate } from "../middleware/validate.middleware.js";
+import { initiatePaymentSchema } from "../validations/payment.validation.js";
 
 const router = express.Router();
 
@@ -31,6 +33,7 @@ router.post(
   protect,
   authorizeRoles("CLIENT", "SYSTEM_ADMIN", "ROOT_ADMIN"),
   paymentLimiter,
+  validate(initiatePaymentSchema),
   paymentController.initiatePayment,
 );
 

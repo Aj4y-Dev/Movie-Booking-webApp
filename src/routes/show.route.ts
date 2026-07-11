@@ -1,6 +1,11 @@
 import express from "express";
 import showController from "../controllers/show.controller.js";
 import { protect, authorizeRoles } from "../middleware/auth.middleware.js";
+import { validate } from "../middleware/validate.middleware.js";
+import {
+  createShowSchema,
+  updateShowSchema,
+} from "../validations/show.validation.js";
 
 const router = express.Router();
 
@@ -134,6 +139,7 @@ router.post(
   "/show",
   protect,
   authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  validate(createShowSchema),
   showController.createShow,
 );
 
@@ -166,6 +172,7 @@ router.patch(
   "/show/:id",
   protect,
   authorizeRoles("USER", "SYSTEM_ADMIN", "ROOT_ADMIN"),
+  validate(updateShowSchema),
   showController.updateShow,
 );
 

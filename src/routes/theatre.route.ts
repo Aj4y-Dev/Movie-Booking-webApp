@@ -1,6 +1,11 @@
 import express from "express";
 import TheatreController from "../controllers/theatre.controller.js";
 import { authorizeRoles, protect } from "../middleware/auth.middleware.js";
+import { validate } from "../middleware/validate.middleware.js";
+import {
+  createTheatreSchema,
+  updateTheatreSchema,
+} from "../validations/theatre.validation.js";
 
 const router = express.Router();
 
@@ -73,6 +78,7 @@ router.post(
   "/theatre",
   protect,
   authorizeRoles("SYSTEM_ADMIN", "ROOT_ADMIN"),
+  validate(createTheatreSchema),
   TheatreController.createNewTheatre,
 );
 
@@ -96,6 +102,7 @@ router.patch(
   "/theatre/:id",
   protect,
   authorizeRoles("SYSTEM_ADMIN", "ROOT_ADMIN"),
+  validate(updateTheatreSchema),
   TheatreController.updateSpecificTheatre,
 );
 

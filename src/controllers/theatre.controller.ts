@@ -32,9 +32,6 @@ class TheatreController {
   createNewTheatre = asyncHandler(async (req: Request, res: Response) => {
     const { name, description, city, postalCode, address, owner } = req.body;
 
-    if (!name || !city || !postalCode || !address || !owner)
-      throw new AppError("All fields required", 400);
-
     const createTheatre = new Theatre({
       name,
       description,

@@ -309,4 +309,5 @@ http://developer.esewa.com.np/pages/Token#payment(esewa)
 https://mongoosejs.com/docs/transactions.html(Transactions in Mongoose)
 https://medium.com/@samuelnoye35/simplifying-api-development-in-node-js-with-swagger-a5021ac45742(swagger api doc)
 https://medium.com/appfoster/implementing-rate-limiting-in-express-js-a-hands-on-guide-1aac3570d53c(rate limiting)
+https://medium.com/@saudpatel.mscit22/server-side-validation-and-sanitization-using-zod-in-node-js-55e46e126635(zod)
 ```

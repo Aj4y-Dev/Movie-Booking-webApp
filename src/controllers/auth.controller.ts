@@ -21,10 +21,6 @@ class AuthController {
   register = asyncHandler(async (req: Request, res: Response) => {
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password) {
-      throw new AppError("All fields are required", 400);
-    }
-
     const existingUser = await User.findOne({ email });
 
     if (existingUser) throw new AppError("Email already exists", 409);
@@ -69,10 +65,6 @@ class AuthController {
   //login
   login = asyncHandler(async (req: Request, res: Response) => {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      throw new AppError("Email and password required", 400);
-    }
 
     // get user with password and refreshToken
     const user = await User.findOne({ email }).select(

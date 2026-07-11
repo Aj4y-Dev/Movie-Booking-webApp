@@ -41,23 +41,6 @@ class MovieController {
       releaseStatus,
     } = req.body;
 
-    if (
-      !name ||
-      !description ||
-      !casts ||
-      !trailerUrl ||
-      !language ||
-      !releaseDate ||
-      !director
-    ) {
-      throw new AppError("All fields are required", 400);
-    }
-
-    // Ensure user is authenticated
-    if (!req.user) {
-      throw new AppError("Unauthorized", 401);
-    }
-
     // Check if the movie already exists
     const existingMovie = await Movie.findOne({
       name: name.trim(),
@@ -92,9 +75,6 @@ class MovieController {
 
     if (!mongoose.Types.ObjectId.isValid(id))
       throw new AppError("Invalid id format", 400);
-
-    if (!Object.keys(req.body).length)
-      throw new AppError("No valid fields provided to update", 400);
 
     const updatedMovie = await Movie.findOneAndUpdate(
       {

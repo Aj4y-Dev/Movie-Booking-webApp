@@ -32,20 +32,6 @@ class ShowController {
       vipPrice,
     } = req.body;
 
-    if (!movie || !theatre || !showTime || !totalSeats)
-      throw new AppError("All fields are required", 400);
-
-    // validate ObjectIds
-    if (!mongoose.Types.ObjectId.isValid(movie))
-      throw new AppError("Invalid movie id format", 400);
-    if (!mongoose.Types.ObjectId.isValid(theatre))
-      throw new AppError("Invalid theatre id format", 400);
-
-    // totalSeats must be a valid number
-    const seatsCount = Number(totalSeats);
-    if (!seatsCount || seatsCount < 1 || seatsCount > 200)
-      throw new AppError("Total seats must be between 1 and 200", 400);
-
     // check movie exists
     const movieExists = await Movie.findById(movie);
     if (!movieExists) throw new AppError("Movie not found", 404);
@@ -70,8 +56,8 @@ class ShowController {
       movie,
       theatre,
       showTime,
-      totalSeats: seatsCount,
-      availableSeats: seatsCount,
+      totalSeats, // already a number from Zod
+      availableSeats: totalSeats,
       standardPrice: standardPrice || 300,
       premiumPrice: premiumPrice || 500,
       vipPrice: vipPrice || 700,
@@ -81,13 +67,12 @@ class ShowController {
 
     // auto generate seats based on totalSeats
     try {
-      await generateSeats(show._id.toString(), seatsCount, {
+      await generateSeats(show._id.toString(), totalSeats, {
         standardPrice: show.standardPrice,
         premiumPrice: show.premiumPrice,
         vipPrice: show.vipPrice,
       });
     } catch (error) {
-      // rollback if seat generation fails, delete the show
       await Show.findByIdAndDelete(show._id);
       throw new AppError("Failed to generate seats for show", 500);
     }

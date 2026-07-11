@@ -2,6 +2,8 @@ import express from "express";
 import authController from "../controllers/auth.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 import { authLimiter } from "../middleware/rateLimiter.js";
+import { validate } from "../middleware/validate.middleware.js";
+import { registerSchema, loginSchema } from "../validations/auth.validation.js";
 
 const router = express.Router();
 
@@ -35,7 +37,12 @@ const router = express.Router();
  *       409:
  *         description: Email already exists
  */
-router.post("/register", authLimiter, authController.register);
+router.post(
+  "/register",
+  authLimiter,
+  validate(registerSchema),
+  authController.register,
+);
 
 /**
  * @swagger
@@ -64,7 +71,7 @@ router.post("/register", authLimiter, authController.register);
  *       401:
  *         description: Invalid credentials
  */
-router.post("/login", authLimiter, authController.login);
+router.post("/login", authLimiter, validate(loginSchema), authController.login);
 
 /**
  * @swagger

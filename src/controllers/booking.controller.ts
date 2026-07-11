@@ -12,15 +12,6 @@ class BookingController {
   createBooking = asyncHandler(async (req: Request, res: Response) => {
     const { show, seats } = req.body;
 
-    if (!show || !seats?.length)
-      throw new AppError("Show and seats are required", 400);
-
-    if (!mongoose.Types.ObjectId.isValid(show))
-      throw new AppError("Invalid show id", 400);
-
-    if (!seats.every((id: string) => mongoose.Types.ObjectId.isValid(id)))
-      throw new AppError("Invalid seat id format", 400);
-
     const now = new Date();
 
     // check show exists and is active

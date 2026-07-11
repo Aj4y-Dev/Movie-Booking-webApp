@@ -12,15 +12,6 @@ class SeatController {
   lockSeats = asyncHandler(async (req: Request, res: Response) => {
     const { seatIds, showId } = req.body;
 
-    if (!seatIds?.length || !showId)
-      throw new AppError("seatIds and showId are required", 400);
-
-    if (!mongoose.Types.ObjectId.isValid(showId))
-      throw new AppError("Invalid show id", 400);
-
-    if (!seatIds.every((id: string) => mongoose.Types.ObjectId.isValid(id)))
-      throw new AppError("Invalid seat id format", 400);
-
     const now = new Date();
     const lockExpiresAt = new Date(now.getTime() + LOCK_DURATION_MS);
 

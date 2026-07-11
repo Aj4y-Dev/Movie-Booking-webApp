@@ -19,9 +19,6 @@ class PaymentController {
   initiatePayment = asyncHandler(async (req: Request, res: Response) => {
     const { bookingId } = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(bookingId))
-      throw new AppError("Invalid booking id", 400);
-
     const booking = await Booking.findById(bookingId);
 
     if (!booking) throw new AppError("Booking not found", 404);
